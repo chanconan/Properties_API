@@ -11,10 +11,13 @@ data['DOWNVOTE'] = 0
 data['NET VOTES'] = data['UPVOTE'] - data['DOWNVOTE']
 data['TOTAL VOTES'] = data['UPVOTE'] + data['DOWNVOTE']
 
+# Since the code is not saved in an actual Database, the changes made to the properties are reset
+# whenever the Flask server is redeployed.
 class Properties(Resource):
+    properties_data = data[['PROPERTY TYPE', 'ADDRESS','PRICE', 'BEDS', 'BATHS', 'STATUS', 'UPVOTE', 'DOWNVOTE', 'NET VOTES', 'TOTAL VOTES', 'DAYS ON MARKET']]
     def get(self):
-        all_properties = data.sort_values(by=["DAYS ON MARKET"], ascending=True)
-        all_properties = all_properties.to_json(orient="index")
+        all_properties = self.properties_data.sort_values(by=["DAYS ON MARKET"], ascending=True)
+        all_properties = all_properties.to_dict(orient="index")
         return all_properties, 200
 
     def post(self):
@@ -29,19 +32,20 @@ class Properties(Resource):
             ascending = True
 
         if sort == "price":
-            all_properties = data.sort_values(by=["PRICE"], ascending=ascending)
+            all_properties = self.properties_data.sort_values(by=["PRICE"], ascending=ascending)
         elif sort == "bedrooms":
-            all_properties = data.sort_values(by=["BEDS"], ascending=ascending)
+            all_properties = selfproperties_data.sort_values(by=["BEDS"], ascending=ascending)
         elif sort == "net":
-            all_properties = data.sort_values(by=["NET VOTES", "DAYS ON MARKET"], ascending=(ascending, True))
+            all_properties = self.properties_data.sort_values(by=["NET VOTES", "DAYS ON MARKET"], ascending=(ascending, True))
         elif sort == "total":
-            all_properties = data.sort_values(by=["TOTAL VOTES", "DAYS ON MARKET"], ascending=(ascending, True))
-        all_properties = all_properties.to_json(orient="index")
+            all_properties = self.properties_data.sort_values(by=["TOTAL VOTES", "DAYS ON MARKET"], ascending=(ascending, True))
+        all_properties = all_properties.to_dict(orient="index")
 
         return all_properties, 200
 
 class PropertyById(Resource):
     def get(self, id):
+        print(data.loc[id]['UPVOTE'])
         single_property = data.to_dict(orient="index")[id]
         return single_property, 200
 
