@@ -35,12 +35,18 @@ class Properties(Resource):
 
 class PropertyById(Resource):
     def get(self, id):
-        singleProperty = data.to_dict(orient="index")[id]
-        return singleProperty, 200
+        single_property = data.to_dict(orient="index")[id]
+        return single_property, 200
 
 class PropertyVotes(Resource):
     def post(self, id):
         vote_method = request.get_json()["vote"].lower()
+        single_property = data.to_dict(orient="index")[id]
+        if vote_method == "upvote":
+            single_property['UPVOTE'] = single_property['UPVOTE'] + 1
+        elif vote_method == "downvote":
+            single_property['DOWNVOTE'] = single_property['DOWNVOTE'] + 1
+        return 200
 
 api.add_resource(Properties, '/properties')
 api.add_resource(PropertyById, '/properties/<int:id>')
