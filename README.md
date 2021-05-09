@@ -44,6 +44,7 @@ There are three main endpoints for functionality
 }
 ```
 The sortBy field values can be ```price, bedrooms, net, total``` depending on what column to sort by.
+
 3. The ```GET request /properties/<int: id>``` will return a dictionary object for a single property with all the columns provided by the CSV. 
 4. Lastly, the ```POST request /properties/vote/<int: id>``` takes in a JSON payload for either ```upvote``` the property or ```downvote```.
 ```
