@@ -20,7 +20,7 @@ python3 --version
 ```
 5. Once Python 3 has been installed, you will need to install Flask Restful and Pandas in order to run the script. 
 ```
-pip3 install flask-restful pandas
+pip3 install flask flask-restful pandas
 ```
 6. After installing the packages, run the application
 ```
