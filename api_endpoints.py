@@ -9,6 +9,9 @@ api = Api(app)
 class Properties(Resource):
     def get(self):
         data = pd.read_csv('properties.csv')
+        data['UPVOTE'] = 0
+        data['DOWNVOTE'] = 0
+        data = data.sort_values(by=["DAYS ON MARKET"], ascending=True)
         data = data.to_json(orient="index")
         return data, 200
 
