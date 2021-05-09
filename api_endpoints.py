@@ -24,12 +24,16 @@ class Properties(Resource):
         return all_properties, 200
 
     def post(self):
-        # Get properties or options from post data. Can be used for handling sort options with price, num of bedrooms
-        # and newest is by default. Also checks if sort is in descending or ascending
+        '''
+        Get properties or options from post data to sort main page 
+        
+        A JSON payload for sorting options is provided to sort the list by price, bedrooms, net and total votes.
+        If ascending order is not provided, set to True
 
+        '''
         request_data = request.get_json()
         sort = request_data['sortBy'].lower()
-        if request_data['ascending'].lower() == "false":
+        if 'ascending' in request_data and request_data['ascending'].lower() == "false":
             ascending = False
         else:
             ascending = True
@@ -48,21 +52,46 @@ class Properties(Resource):
 
 class PropertyById(Resource):
     def get(self, id):
+        '''
+        Get property by ID
+
+        Parameters:
+        id (int): ID of property
+
+        Returns:
+        dict: Property object
+        int: Status code of HTTP request
+        '''
         print(data.loc[id]['UPVOTE'])
         single_property = data.to_dict(orient="index")[id]
         return single_property, 200
 
 class PropertyVotes(Resource):
     def post(self, id):
+        '''
+        Upvote or Downvote a property.
+        
+        Takes the ID of the property and increments the upvote or downvote column. It then updates the NET
+        and TOTAL votes of the property.
+
+        Parameters:
+        id (int): ID of property
+
+        Returns:
+        int: Status code of HTTP request
+        '''
         vote_method = request.get_json()["vote"].lower()
         if vote_method == "upvote":
             data.at[id, 'UPVOTE'] = data.at[id, 'UPVOTE'] + 1
         elif vote_method == "downvote":
             data.at[id, 'DOWNVOTE'] = data.at[id, 'DOWNVOTE'] + 1
+        else:
+            return 400
         data.at[id, 'NET VOTES'] = data.at[id, 'UPVOTE'] - data.at[id, 'DOWNVOTE']
         data.at[id, 'TOTAL VOTES'] = data.at[id, 'UPVOTE'] + data.at[id, 'DOWNVOTE']
         return 200
 
+# Add endpoints and their associated classes to API"
 api.add_resource(Properties, '/properties')
 api.add_resource(PropertyById, '/properties/<int:id>')
 api.add_resource(PropertyVotes, '/properties/vote/<int:id>')
