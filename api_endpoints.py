@@ -11,37 +11,40 @@ data['DOWNVOTE'] = 0
 
 class Properties(Resource):
     def get(self):
-        allProperties = data.sort_values(by=["DAYS ON MARKET"], ascending=True)
-        allProperties = allProperties.to_json(orient="index")
-        return allProperties, 200
+        all_properties = data.sort_values(by=["DAYS ON MARKET"], ascending=True)
+        all_properties = all_properties.to_json(orient="index")
+        return all_properties, 200
 
     def post(self):
         # Get properties or options from post data. Can be used for handling sort options with price, num of bedrooms
-        # and newest is by default.
+        # and newest is by default. Also checks if sort is in descending or ascending
+
         request_data = request.get_json()
         if request_data['ascending'].lower() == "false":
             ascending = False
         else:
             ascending = True
-        
-        if request_data['sortBy'] == "price":
-            allProperties = data.sort_values(by=["PRICE"], ascending=ascending)
-        elif request_data['sortBy'] == "bedrooms":
-            allProperties = data.sort_values(by["BEDS"], ascending=ascending)
-        allProperties = allProperties.to_json(orient="index")
 
-        return allProperties, 200
+        if request_data['sortBy'] == "price":
+            all_properties = data.sort_values(by=["PRICE"], ascending=ascending)
+        elif request_data['sortBy'] == "bedrooms":
+            all_properties = data.sort_values(by["BEDS"], ascending=ascending)
+        all_properties = all_properties.to_json(orient="index")
+
+        return all_properties, 200
 
 class PropertyById(Resource):
     def get(self, id):
-        singleProperty = data.to_dict()
-        prop = {}
-        for field in singleProperty:
-            prop[field] = singleProperty[field][id]
-        return {id:prop}, 200
+        singleProperty = data.to_dict(orient="index")[id]
+        return singleProperty, 200
+
+class PropertyVotes(Resource):
+    def post(self, id):
+        vote_method = request.get_json()["vote"].lower()
 
 api.add_resource(Properties, '/properties')
 api.add_resource(PropertyById, '/properties/<int:id>')
+api.add_resource(PropertyVotes, '/properties/vote/<int:id>')
 
 if __name__ == '__main__':
     app.run()  # run our Flask app
