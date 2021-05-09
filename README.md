@@ -1,4 +1,4 @@
-# Properties_API
+# Properties API
 In order to run this simple API endpoint script, there are a few packages that are necessary. 
 Following the steps provided by the following will get started with having Python3 installed on MacOS
 https://docs.python-guide.org/starting/install3/osx/
