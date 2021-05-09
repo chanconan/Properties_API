@@ -14,7 +14,10 @@ data['TOTAL VOTES'] = data['UPVOTE'] + data['DOWNVOTE']
 # Since the code is not saved in an actual Database, the changes made to the properties are reset
 # whenever the Flask server is redeployed.
 class Properties(Resource):
+    # Filtered out all data into a smaller dataframe, listing most of the essentials a user want to look at
     properties_data = data[['PROPERTY TYPE', 'ADDRESS','PRICE', 'BEDS', 'BATHS', 'STATUS', 'UPVOTE', 'DOWNVOTE', 'NET VOTES', 'TOTAL VOTES', 'DAYS ON MARKET']]
+    
+    # By default, sort properties by newest
     def get(self):
         all_properties = self.properties_data.sort_values(by=["DAYS ON MARKET"], ascending=True)
         all_properties = all_properties.to_dict(orient="index")
