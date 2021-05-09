@@ -8,6 +8,8 @@ api = Api(app)
 data = pd.read_csv('properties.csv')
 data['UPVOTE'] = 0
 data['DOWNVOTE'] = 0
+data['NET VOTES'] = data['UPVOTE'] - data['DOWNVOTE']
+data['TOTAL VOTES'] = data['UPVOTE'] + data['DOWNVOTE']
 
 class Properties(Resource):
     def get(self):
@@ -20,15 +22,20 @@ class Properties(Resource):
         # and newest is by default. Also checks if sort is in descending or ascending
 
         request_data = request.get_json()
+        sort = request_data['sortBy'].lower()
         if request_data['ascending'].lower() == "false":
             ascending = False
         else:
             ascending = True
 
-        if request_data['sortBy'] == "price":
+        if sort == "price":
             all_properties = data.sort_values(by=["PRICE"], ascending=ascending)
-        elif request_data['sortBy'] == "bedrooms":
-            all_properties = data.sort_values(by["BEDS"], ascending=ascending)
+        elif sort == "bedrooms":
+            all_properties = data.sort_values(by=["BEDS"], ascending=ascending)
+        elif sort == "net":
+            all_properties = data.sort_values(by=["NET VOTES", "DAYS ON MARKET"], ascending=(ascending, True))
+        elif sort == "total":
+            all_properties = data.sort_values(by=["TOTAL VOTES", "DAYS ON MARKET"], ascending=(ascending, True))
         all_properties = all_properties.to_json(orient="index")
 
         return all_properties, 200
@@ -41,11 +48,12 @@ class PropertyById(Resource):
 class PropertyVotes(Resource):
     def post(self, id):
         vote_method = request.get_json()["vote"].lower()
-        single_property = data.to_dict(orient="index")[id]
         if vote_method == "upvote":
-            single_property['UPVOTE'] = single_property['UPVOTE'] + 1
+            data.at[id, 'UPVOTE'] = data.at[id, 'UPVOTE'] + 1
         elif vote_method == "downvote":
-            single_property['DOWNVOTE'] = single_property['DOWNVOTE'] + 1
+            data.at[id, 'DOWNVOTE'] = data.at[id, 'DOWNVOTE'] + 1
+        data.at[id, 'NET VOTES'] = data.at[id, 'UPVOTE'] - data.at[id, 'DOWNVOTE']
+        data.at[id, 'TOTAL VOTES'] = data.at[id, 'UPVOTE'] + data.at[id, 'DOWNVOTE']
         return 200
 
 api.add_resource(Properties, '/properties')
