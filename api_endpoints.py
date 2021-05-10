@@ -19,7 +19,8 @@ class Properties(Resource):
     
     # By default, sort properties by newest
     def get(self):
-        all_properties = self.properties_data.sort_values(by=["DAYS ON MARKET"], ascending=True)
+        properties_data = data[['PROPERTY TYPE', 'ADDRESS','PRICE', 'BEDS', 'BATHS', 'STATUS', 'UPVOTE', 'DOWNVOTE', 'NET VOTES', 'TOTAL VOTES', 'DAYS ON MARKET']]
+        all_properties = properties_data.sort_values(by=["DAYS ON MARKET"], ascending=True)
         all_properties = all_properties.to_dict(orient="index")
         return all_properties, 200
 
@@ -33,21 +34,22 @@ class Properties(Resource):
         '''
         request_data = request.get_json()
         sort = request_data['sortBy'].lower()
+        properties_data = data[['PROPERTY TYPE', 'ADDRESS','PRICE', 'BEDS', 'BATHS', 'STATUS', 'UPVOTE', 'DOWNVOTE', 'NET VOTES', 'TOTAL VOTES', 'DAYS ON MARKET']]
+
         if 'ascending' in request_data and request_data['ascending'].lower() == "false":
             ascending = False
         else:
             ascending = True
-
         if sort == "price":
-            all_properties = self.properties_data.sort_values(by=["PRICE"], ascending=ascending)
+            all_properties = properties_data.sort_values(by=["PRICE"], ascending=ascending)
         elif sort == "bedrooms":
-            all_properties = selfproperties_data.sort_values(by=["BEDS"], ascending=ascending)
+            all_properties = properties_data.sort_values(by=["BEDS"], ascending=ascending)
         elif sort == "net":
-            all_properties = self.properties_data.sort_values(by=["NET VOTES", "DAYS ON MARKET"], ascending=(ascending, True))
+            all_properties = properties_data.sort_values(by=["NET VOTES", "DAYS ON MARKET"], ascending=(ascending, True))
         elif sort == "total":
-            all_properties = self.properties_data.sort_values(by=["TOTAL VOTES", "DAYS ON MARKET"], ascending=(ascending, True))
+            all_properties = properties_data.sort_values(by=["TOTAL VOTES", "DAYS ON MARKET"], ascending=(ascending, True))
         all_properties = all_properties.to_dict(orient="index")
-
+        print(all_properties)
         return all_properties, 200
 
 class PropertyById(Resource):
