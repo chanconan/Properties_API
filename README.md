@@ -1,4 +1,4 @@
-# Properties_API
+# Properties API
 In order to run this simple API endpoint script, there are a few packages that are necessary. 
 Following the steps provided by the following will get started with having Python3 installed on MacOS
 https://docs.python-guide.org/starting/install3/osx/
@@ -20,7 +20,7 @@ python3 --version
 ```
 5. Once Python 3 has been installed, you will need to install Flask Restful and Pandas in order to run the script. 
 ```
-pip3 install flask-restful pandas
+pip3 install flask flask-restful pandas
 ```
 6. After installing the packages, run the application
 ```
@@ -44,6 +44,7 @@ There are three main endpoints for functionality
 }
 ```
 The sortBy field values can be ```price, bedrooms, net, total``` depending on what column to sort by.
+
 3. The ```GET request /properties/<int: id>``` will return a dictionary object for a single property with all the columns provided by the CSV. 
 4. Lastly, the ```POST request /properties/vote/<int: id>``` takes in a JSON payload for either ```upvote``` the property or ```downvote```.
 ```
